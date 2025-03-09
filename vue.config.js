@@ -5,15 +5,15 @@ module.exports = defineConfig({
 
   pwa: {
     name: "My Vue PWA",
-    themeColor: "#4A90E2",
-    msTileColor: "#000000",
+    themeColor: "#1E1E1E",  // Match this with your actual background color
+    msTileColor: "#1E1E1E", // Match for Windows Tiles
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black-translucent",
     manifestOptions: {
       short_name: "VuePWA",
       start_url: "/",
       display: "standalone",
-      background_color: "#ffffff",
+      background_color: "#1E1E1E", // Match with your app background
       icons: [
         {
           src: "/img/icons/icon-192x192.png",
