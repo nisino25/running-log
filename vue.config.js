@@ -4,16 +4,16 @@ module.exports = defineConfig({
   transpileDependencies: true,
 
   pwa: {
-    name: "Running log",
-    themeColor: "#1E1E1E",  // Match this with your actual background color
-    msTileColor: "#1E1E1E", // Match for Windows Tiles
+    name: "My Vue PWA",
+    themeColor: "#1E1E1E", // Matches the background
+    msTileColor: "#1E1E1E", // For Windows
     appleMobileWebAppCapable: "yes",
-    appleMobileWebAppStatusBarStyle: "black-translucent",
+    appleMobileWebAppStatusBarStyle: "black-translucent", // For iOS (forces dark overlay)
     manifestOptions: {
       short_name: "VuePWA",
       start_url: "/",
       display: "standalone",
-      background_color: "#1E1E1E", // Match with your app background
+      background_color: "#1E1E1E", // Ensures seamless edge blending
       icons: [
         {
           src: "/img/icons/icon-192x192.png",
