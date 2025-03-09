@@ -1,9 +1,9 @@
 <template>
-  <div class="flex justify-center items-center bg-gray-900 min-h-screen p-4">
-    <div class="w-full max-w-3xl bg-gray-800 rounded-2xl p-4 shadow-lg">
+  <div class="flex justify-center items-center bg-gray-900 min-h-screen p-4 landscape:h-[95dvh]">
+    <div class="w-full max-w-5xl bg-gray-800 rounded-2xl p-4 shadow-lg flex flex-col items-center">
       <h2 class="text-white text-center text-xl font-semibold mb-2">🏃 Running Progress</h2>
-      <div class="relative">
-        <canvas ref="chartCanvas" class="w-full h-[70vh] md:h-[50vh] landscape:h-[95dvh]"></canvas>
+      <div class="relative w-full">
+        <canvas ref="chartCanvas" class="w-full h-[60vh] md:h-[50vh] landscape:h-[80dvh]"></canvas>
       </div>
     </div>
   </div>
@@ -132,13 +132,15 @@ onMounted(fetchRunningLog);
 </script>
 
 <style scoped>
-/* Ensures full height on iPhone landscape mode */
+/* Makes sure everything fits nicely in landscape mode */
 @media (orientation: landscape) {
-  canvas {
-    height: 95dvh !important;
+  .landscape {
+    height: 95dvh;
+    max-width: 90vw;
+  }
+
+  canvas{
+    height: 75dvh !important;
   }
 }
 </style>
-
-<!-- Add Tailwind CDN -->
-<!-- <script src="https://cdn.tailwindcss.com"></script> -->
