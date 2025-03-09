@@ -4,7 +4,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
 
   pwa: {
-    name: "My Vue PWA",
+    name: "Running log",
     themeColor: "#1E1E1E",  // Match this with your actual background color
     msTileColor: "#1E1E1E", // Match for Windows Tiles
     appleMobileWebAppCapable: "yes",
