@@ -17,23 +17,23 @@ const chartCanvas = ref(null);
 const chartInstance = ref(null);
 const fetchedRunningLog = ref([]);
 
-const getCachedData = (key) => {
-  const cached = localStorage.getItem(key);
-  return cached ? JSON.parse(cached) : null;
-};
+// const getCachedData = (key) => {
+//   const cached = localStorage.getItem(key);
+//   return cached ? JSON.parse(cached) : null;
+// };
 
-const cacheData = (key, data) => {
-  localStorage.setItem(key, JSON.stringify(data));
-};
+// const cacheData = (key, data) => {
+//   localStorage.setItem(key, JSON.stringify(data));
+// };
 
 const fetchRunningLog = () => {
-  const cachedData = getCachedData("runningLog");
+  // const cachedData = getCachedData("runningLog");
 
-  if (cachedData) {
-    fetchedRunningLog.value = cachedData;
-    renderRunningChart();
-    return;
-  }
+  // if (cachedData) {
+  //   fetchedRunningLog.value = cachedData;
+  //   renderRunningChart();
+  //   return;
+  // }
 
   const callbackName = `jsonpCallback_${Date.now()}_${Math.random()
     .toString(36)
@@ -42,7 +42,7 @@ const fetchRunningLog = () => {
   window[callbackName] = (data) => {
     if (data.success) {
       fetchedRunningLog.value = data.data;
-      cacheData("runningLog", data.data);
+      // cacheData("runningLog", data.data);
       renderRunningChart();
     } else {
       console.error("Error fetching running data:", data.message);
@@ -74,21 +74,26 @@ const renderRunningChart = () => {
   );
 
   const labels = filteredData.map((d) => d.session);
+
   const goalData = filteredData.map((d) => d.goal);
   const resultData = filteredData.map((d) => d.result);
+
+  const paceGoalData = filteredData.map((d) => d.paceGoal);
+  console.log(filteredData)
+  const paceResultData = filteredData.map((d) => d.pace);
 
   chartInstance.value = new Chart(ctx, {
     type: "line",
     data: {
       labels,
       datasets: [
-        {
-          label: "Goal",
-          data: goalData,
-          borderColor: "#D1D5DB",
-          backgroundColor: "rgba(209, 213, 219, 0.5)",
-          fill: false,
-          tension: 0.2,
+      {
+            label: "Goal",
+            data: goalData,
+            borderColor: "rgba(128, 128, 128, 0.5)", // Grey with 50% opacity
+            backgroundColor: "rgba(128, 128, 128, 0.2)", // Optional: Light fill
+            fill: false,
+            tension: 0.1,
         },
         {
           label: "Result",
@@ -99,6 +104,24 @@ const renderRunningChart = () => {
           tension: 0.2,
           spanGaps: false,
         },
+        {
+          label: "Pace Goal",
+          data: paceGoalData,
+          borderColor: "rgba(255, 165, 0, 0.7)", // Orange with 70% opacity
+          backgroundColor: "rgba(255, 165, 0, 0.2)", // Light fill for visibility
+          fill: false,
+          tension: 0.1,
+        },
+        {
+          label: "Pace",
+          data: paceResultData,
+          borderColor: "rgba(50, 205, 50, 0.8)", // LimeGreen with 80% opacity
+          backgroundColor: "rgba(50, 205, 50, 0.2)", // Light fill for visibility
+          fill: false,
+          tension: 0.1,
+          spanGaps: false,
+        }
+
       ],
     },
     options: {
