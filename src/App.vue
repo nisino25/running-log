@@ -158,7 +158,7 @@
               { label: "Pace Goal", data: filteredData.map(d => d.paceGoal), borderColor: "rgba(255, 165, 0, 0.7)", fill: false },
               { label: "Pace", data: filteredData.map(d => d.pace), borderColor: "rgba(50, 205, 50, 0.8)", fill: false },
               {
-                label: "Weight Goal",
+                label: `Weight Goal: ${weightGoal}kg`,
                 data: filteredData.map(d => d.weight - weightGoal),
                 borderColor: "rgba(255, 99, 132, 0.8)",
                 fill: false,
