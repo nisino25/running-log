@@ -5,7 +5,7 @@
           {{ currentMode === 'running' ? '🏃 Running Progress' : '🇮🇹 Italian Study Progress' }}
         </h2>
   
-        <div class="mb-4">
+        <div class="mb-4 flex gap-2">
           <button
             @click="handleModeChange('running')"
             :class="currentMode === 'running' ? 'bg-blue-500' : 'bg-gray-600'"
@@ -16,7 +16,7 @@
           <button
             @click="handleModeChange('italian')"
             :class="currentMode === 'italian' ? 'bg-blue-500' : 'bg-gray-600'"
-            class="text-white py-2 px-4 rounded-r-md"
+            class="text-white py-2 px-4 rounded-md"
           >
             Italian Study
           </button>
