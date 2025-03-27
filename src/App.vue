@@ -20,6 +20,13 @@
           >
             Italian Study
           </button>
+          <button
+            @click="handleModeChange('yoga')"
+            :class="currentMode === 'yoga' ? 'bg-blue-500' : 'bg-gray-600'"
+            class="text-white py-2 px-4 rounded-r-md"
+          >
+            Yoga
+          </button>
         </div>
   
         <div v-if="loading" class="flex justify-center items-center h-[60vh]">
@@ -50,7 +57,8 @@
         hasData: false,
         apiUrls: {
           running: "https://script.google.com/macros/s/AKfycbxKydiLdv9R6g49K7NHJ9T2uorJT_hj_7pWIyldK1nXskUOvfodQppH-QRsNdylGvOh/exec",
-          italian: "https://script.google.com/macros/s/AKfycbzlH9cJfJos_4sJ45tybealgTcObkBNBHcSmOcsk6niYvEmky-45dKUIf1VwGyH1apxtQ/exec"
+          italian: "https://script.google.com/macros/s/AKfycbzlH9cJfJos_4sJ45tybealgTcObkBNBHcSmOcsk6niYvEmky-45dKUIf1VwGyH1apxtQ/exec",
+          yoga: "https://script.google.com/macros/s/AKfycbxadlbTJ5wALsA5BKf7CZixCLC8E3c-dFsAbdRR8dn7i7LxMcM8dXddiHO_Tb1oS-c/exec"
         }
       };
     },
@@ -164,7 +172,7 @@
                 fill: false,
               },
             ];
-          } else {
+          } else if(this.currentMode === 'italian') {
             const filteredData = this.fetchedData.filter(d => d && d.result);
             
             if (filteredData.length === 0) {
@@ -181,7 +189,24 @@
                 { label: "Unit Goal", data: filteredData.map(d => d.unitGoal), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
                 { label: "Result", data: filteredData.map(d => d.result), borderColor: "#EF4444", fill: false },
             ];
-        }
+          } else if("yoga") {
+            const filteredData = this.fetchedData.filter(d => d && d.date);
+            
+            if (filteredData.length === 0) {
+                this.error = "No yoga data available";
+                return;
+            }
+        
+            labels = filteredData.map(d => {
+                const date = new Date(d.date);
+                return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
+            });
+        
+            datasets = [
+                { label: "Date", data: filteredData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
+                { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
+            ];
+          }
   
           
           this.chartInstance = new Chart(ctx, {
