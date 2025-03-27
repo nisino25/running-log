@@ -189,7 +189,7 @@
                 { label: "Unit Goal", data: filteredData.map(d => d.unitGoal), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
                 { label: "Result", data: filteredData.map(d => d.result), borderColor: "#EF4444", fill: false },
             ];
-          } else if("yoga") {
+          } else if(this.currentMode === "yoga") {
             const filteredData = this.fetchedData.filter(d => d && d.date);
             
             if (filteredData.length === 0) {
