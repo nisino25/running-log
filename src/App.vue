@@ -1,31 +1,38 @@
 <template>
-  <div class="flex justify-center items-center bg-gray-900 min-h-screen p-4 landscape:h-[95dvh]">
-    <div class="w-full max-w-5xl bg-gray-800 rounded-2xl p-4 shadow-lg flex flex-col items-center">
-      <h2 class="text-white text-center text-xl font-semibold mb-2">
+  <div class="flex justify-center items-center bg-gray-900 min-h-screen p-4 landscape:h-[97.5dvh]">
+    <div class="w-full flex flex-col items-center">
+      <!-- <h2 class="text-white text-center text-xl font-semibold mb-2">
         {{ currentMode === 'running' ? '🏃 Running Progress' : '🇮🇹 Italian Study Progress' }}
-      </h2>
+      </h2> -->
 
-      <div class="mb-4 flex gap-2">
+      <div class="mb-4 flex gap-2 text-xl">
         <button
           @click="handleModeChange('running')"
           :class="currentMode === 'running' ? 'bg-blue-500' : 'bg-gray-600'"
           class="text-white py-2 px-4 rounded-l-md"
         >
-          Running
+        🏃
         </button>
         <button
           @click="handleModeChange('italian')"
           :class="currentMode === 'italian' ? 'bg-blue-500' : 'bg-gray-600'"
           class="text-white py-2 px-4 rounded-md"
         >
-          Italian Study
+        🇮🇹
         </button>
         <button
           @click="handleModeChange('yoga')"
           :class="currentMode === 'yoga' ? 'bg-blue-500' : 'bg-gray-600'"
+          class="text-white py-2 px-4 rounded-md"
+        >
+        🧘‍♂️
+        </button>
+        <button
+          @click="handleModeChange('swimming')"
+          :class="currentMode === 'swimming' ? 'bg-blue-500' : 'bg-gray-600'"
           class="text-white py-2 px-4 rounded-r-md"
         >
-          Yoga
+        🏊
         </button>
       </div>
 
@@ -199,6 +206,29 @@ export default {
               { label: "Date", data: filteredData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
               { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
           ];
+        } else if(this.currentMode === "swimming") {
+          const filteredData = this.fetchedData.filter(d => d && d.date);
+          
+          if (filteredData.length === 0) {
+              this.error = "No swimminf data available";
+              return;
+          }
+      
+          labels = filteredData.map(d => {
+              const date = new Date(d.date);
+              return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
+          });
+      
+          datasets = [
+              { label: "Date", data: filteredData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
+              {
+                label: "Distance (100m units)",
+                data: filteredData.map(d => (d.laps * 25) / 100),
+                borderColor: "#3B82F6", // feel free to change the color
+                fill: false
+              },
+              { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
+          ];
         }
 
         
@@ -234,6 +264,8 @@ export default {
         data = this.allData.italianStudyData || [];
       } else if (this.currentMode === 'yoga') {
         data = this.allData.yogaData || [];
+      }else if (this.currentMode === 'swimming') {
+        data = this.allData.swimmingData || [];
       }
 
       this.fetchedData = data;
