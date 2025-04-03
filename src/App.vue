@@ -94,7 +94,7 @@ export default {
       this.loading = true;
       this.error = null;
 
-      const callbackName = jsonpCallback${Date.now()};
+      const callbackName = `jsonpCallback${Date.now()}`;
       window[callbackName] = (response) => {
         this.loading = false;
 
@@ -109,7 +109,7 @@ export default {
       };
 
       const script = document.createElement("script");
-      script.src = ${this.baseUrl}?action=fetchAllSheets&callback=${callbackName};
+      script.src = `${this.baseUrl}?action=fetchAllSheets&callback=${callbackName}`;
       script.async = true;
 
       script.onerror = () => {
@@ -166,7 +166,7 @@ export default {
             { label: "Pace Goal", data: filteredData.map(d => d.paceGoal), borderColor: "rgba(255, 165, 0, 0.7)", fill: false },
             { label: "Pace", data: filteredData.map(d => d.pace), borderColor: "rgba(50, 205, 50, 0.8)", fill: false },
             {
-              label: Weight Goal: ${weightGoal}kg,
+              label: `Weight Goal: ${weightGoal}kg`,
               data: filteredData.map(d => d.weight - weightGoal),
               borderColor: "rgba(255, 99, 132, 0.8)",
               fill: false,
@@ -182,7 +182,7 @@ export default {
       
           labels = filteredData.map(d => {
               const date = new Date(d.date);
-              return ${date.getMonth() + 1}-${date.getDate()}; // Format as MM-DD
+              return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
           });
       
           datasets = [
@@ -199,7 +199,7 @@ export default {
       
           labels = filteredData.map(d => {
               const date = new Date(d.date);
-              return ${date.getMonth() + 1}-${date.getDate()}; // Format as MM-DD
+              return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
           });
       
           datasets = [
@@ -216,7 +216,7 @@ export default {
       
           labels = filteredData.map(d => {
               const date = new Date(d.date);
-              return ${date.getMonth() + 1}-${date.getDate()}; // Format as MM-DD
+              return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
           });
       
           datasets = [
@@ -271,7 +271,7 @@ export default {
       this.fetchedData = data;
 
       if (!data || data.length === 0) {
-        this.error = No ${this.currentMode} data available;
+        this.error = `No ${this.currentMode} data available`;
         return;
       }
 
