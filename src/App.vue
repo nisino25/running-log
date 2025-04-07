@@ -36,6 +36,38 @@
         </button>
       </div>
 
+      <div v-if="hasData && !error">
+        <div v-if="currentMode == 'yoga'">
+          <button
+            @click="registerYoga()"
+            class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition duration-300 ease-in-out"
+          >
+            登録
+          </button>
+
+        </div>
+        <div v-if="currentMode == 'swimming'">
+          <div class="flex items-center gap-2">
+          <input
+            v-model="swimmingLaps"
+            type="number"
+            id="laps"
+            class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            min="1"
+            placeholder="例: 20"
+          />
+
+          <button
+            @click="registerSwimming()"
+            class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
+          >
+            登録
+          </button>
+        </div>
+        </div>
+
+      </div>
+
       <div v-if="loading" class="flex justify-center items-center h-[60vh]">
         <div class="text-white text-lg">Loading data...</div>
       </div>
@@ -66,7 +98,9 @@ export default {
       loading: true,
       error: null,
       hasData: false,
-      baseUrl: "https://script.google.com/macros/s/AKfycbzvoE9ykmd2bzvBFwpq1nDRRvF0BW7-DXbC4HMq7HtaDDTu41Y_G5LGlZ_cImTfOmgz/exec"
+      baseUrl: "https://script.google.com/macros/s/AKfycby_sHXjORTs-1-8r4k9Y7FadL8Aw_Lj3OAu_OvA2e_WBw7sWwr1EMG2T5ceTVaGpxPa/exec",
+
+      swimmingLaps: null,
     };
   },
   mounted() {
@@ -280,6 +314,54 @@ export default {
         this.renderChart();
       });
     },
+
+    registerYoga() {
+      this.loading = true;
+      this.error = null;
+      
+      const callbackName = `jsonpCallback${Date.now()}`;
+      window[callbackName] = (response) => {
+        console.log(response);
+
+        delete window[callbackName];
+      };
+
+      const script = document.createElement("script");
+      script.src = `${this.baseUrl}?action=addCurrentJapaneseDate&callback=${callbackName}`;
+      script.async = true;
+
+      document.body.appendChild(script);
+      script.onload = () => document.body.removeChild(script);
+
+      setTimeout(() => {
+        this.fetchAllData();
+      }, 500);
+    },
+
+    registerSwimming() {
+      this.loading = true;
+      this.error = null;
+      
+      const callbackName = `jsonpCallback${Date.now()}`;
+      window[callbackName] = (response) => {
+        console.log(response);
+
+        delete window[callbackName];
+      };
+
+      const script = document.createElement("script");
+      script.src = `${this.baseUrl}?action=addSwimmingData&laps=${this.swimmingLaps}&callback=${callbackName}`;
+      script.async = true;
+
+      document.body.appendChild(script);
+      script.onload = () => document.body.removeChild(script);
+
+      setTimeout(() => {
+        this.fetchAllData();
+      }, 500);
+    },
+
+
 
   }
 };
