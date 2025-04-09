@@ -34,6 +34,13 @@
         >
         🏊
         </button>
+        <button
+          @click="handleModeChange('weight')"
+          :class="currentMode === 'weight' ? 'bg-blue-500' : 'bg-gray-600'"
+          class="text-white py-2 px-4 rounded-r-md"
+        >
+        🫃🏻
+        </button>
       </div>
 
       <div v-if="hasData && !error">
@@ -48,22 +55,41 @@
         </div>
         <div v-if="currentMode == 'swimming'">
           <div class="flex items-center gap-2">
-          <input
-            v-model="swimmingLaps"
-            type="number"
-            id="laps"
-            class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-            min="1"
-            placeholder="例: 20"
-          />
-
-          <button
-            @click="registerSwimming()"
-            class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
-          >
-            登録
-          </button>
+            <input
+              v-model="swimmingLaps"
+              type="number"
+              id="laps"
+              class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+              min="1"
+              placeholder="例: 20"
+            />
+  
+            <button
+              @click="registerSwimming()"
+              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
+            >
+              登録
+            </button>
+          </div>
         </div>
+        <div v-if="currentMode == 'weight'">
+          <div class="flex items-center gap-2">
+            <input
+              v-model="weightNum"
+              type="number"
+              id="weightNum"
+              class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+              min="1"
+              placeholder="例: 65"
+            />
+  
+            <button
+              @click="registerWeight()"
+              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
+            >
+              登録
+            </button>
+          </div>
         </div>
 
       </div>
@@ -98,9 +124,10 @@ export default {
       loading: true,
       error: null,
       hasData: false,
-      baseUrl: "https://script.google.com/macros/s/AKfycby_sHXjORTs-1-8r4k9Y7FadL8Aw_Lj3OAu_OvA2e_WBw7sWwr1EMG2T5ceTVaGpxPa/exec",
+      baseUrl: "https://script.google.com/macros/s/AKfycbwocAAu-edxSVft7Dm4yjcGP92RaPYWdfrpFWBLnU8nTb2EtHXEFo3pGtGhKiGdI3jR/exec",
 
       swimmingLaps: null,
+      weightNum: null,
     };
   },
   mounted() {
@@ -263,6 +290,29 @@ export default {
               },
               { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
           ];
+        } else if(this.currentMode === "weight") {
+          const filteredData = this.fetchedData.filter(d => d && d.date);
+          
+          if (filteredData.length === 0) {
+              this.error = "No swimminf data available";
+              return;
+          }
+      
+          labels = filteredData.map(d => {
+              const date = new Date(d.date);
+              return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
+          });
+      
+          datasets = [
+              { label: "Date", data: filteredData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
+              {
+                label: "Distance (100m units)",
+                data: filteredData.map(d => (d.laps * 25) / 100),
+                borderColor: "#3B82F6", // feel free to change the color
+                fill: false
+              },
+              { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
+          ];
         }
 
         
@@ -298,8 +348,10 @@ export default {
         data = this.allData.italianStudyData || [];
       } else if (this.currentMode === 'yoga') {
         data = this.allData.yogaData || [];
-      }else if (this.currentMode === 'swimming') {
+      } else if (this.currentMode === 'swimming') {
         data = this.allData.swimmingData || [];
+      } else if (this.currentMode === 'weight') {
+        data = this.allData.weightData || [];
       }
 
       this.fetchedData = data;
@@ -351,6 +403,29 @@ export default {
 
       const script = document.createElement("script");
       script.src = `${this.baseUrl}?action=addSwimmingData&laps=${this.swimmingLaps}&callback=${callbackName}`;
+      script.async = true;
+
+      document.body.appendChild(script);
+      script.onload = () => document.body.removeChild(script);
+
+      setTimeout(() => {
+        this.fetchAllData();
+      }, 500);
+    },
+
+    registerWeight() {
+      this.loading = true;
+      this.error = null;
+      
+      const callbackName = `jsonpCallback${Date.now()}`;
+      window[callbackName] = (response) => {
+        console.log(response);
+
+        delete window[callbackName];
+      };
+
+      const script = document.createElement("script");
+      script.src = `${this.baseUrl}?action=addWeightData&weightNum=${this.weightNum}&callback=${callbackName}`;
       script.async = true;
 
       document.body.appendChild(script);
