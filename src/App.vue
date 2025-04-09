@@ -124,7 +124,7 @@ export default {
       loading: true,
       error: null,
       hasData: false,
-      baseUrl: "https://script.google.com/macros/s/AKfycbzsV8ncUnDdmEjLxIAIlmxfjnTK12ebSU598ESlSdS1LKTq1tOh58CFOquO52IJ7HYX/exec",
+      baseUrl: "https://script.google.com/macros/s/AKfycbxj_aD8kVSopROfqwMJbT0MhIt8-HhXu2j0mlpOKS_hYuFcda8Qx7sVeSMIWior1uL9/exec",
 
       swimmingLaps: null,
       weightNum: null,
