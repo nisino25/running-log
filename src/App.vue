@@ -305,13 +305,7 @@ export default {
       
           datasets = [
               { label: "Date", data: filteredData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
-              {
-                label: "Distance (100m units)",
-                data: filteredData.map(d => (d.laps * 25) / 100),
-                borderColor: "#3B82F6", // feel free to change the color
-                fill: false
-              },
-              { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
+              { label: "Weight", data: filteredData.map(d => d.weight), borderColor: "#EF4444", fill: false },
           ];
         }
 
