@@ -91,6 +91,25 @@
             </button>
           </div>
         </div>
+        <div v-if="currentMode == 'italian'">
+          <div class="flex items-center gap-2">
+            <input
+              v-model="courseNum"
+              type="courseNum"
+              id="courseNum"
+              class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+              min="1"
+              placeholder="勉強中のコース"
+            />
+  
+            <button
+              @click="registerItalian()"
+              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
+            >
+              登録
+            </button>
+          </div>
+        </div>
         <div v-if="currentMode == 'running'">
           <div class="flex items-center gap-2">
             <input
@@ -99,7 +118,7 @@
               id="resultNum"
               class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               min="1"
-              placeholder="例: 5.0"
+              placeholder="距離"
             />
             <input
               v-model="paceNum"
@@ -107,7 +126,7 @@
               id="paceNum"
               class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               min="1"
-              placeholder="例: 6.0"
+              placeholder="ペース"
             />
   
             <button
@@ -151,13 +170,15 @@ export default {
       loading: true,
       error: null,
       hasData: false,
-      baseUrl: "https://script.google.com/macros/s/AKfycby5tpwqAUN2np8RJWyq1ra9XojNM8Ecjsgmk1NdeHl-d2VRJULHfmyamu_vQEKkhkLn/exec",
+      baseUrl: "https://script.google.com/macros/s/AKfycbwcCN3CCcAnQ1UfXhtvJEPessRRFDKhSio1C-6qNQuXft8b5ZJ6jxecGMe1XwTMv0Ta/exec",
 
       swimmingLaps: null,
       weightNum: null,
 
       resultNum: null,
       paceNum: null,
+
+      courseNum: null,
     };
   },
   mounted() {
@@ -472,6 +493,29 @@ export default {
 
       const script = document.createElement("script");
       script.src = `${this.baseUrl}?action=addRunningData&resultNum=${this.resultNum}&paceNum=${this.paceNum}&callback=${callbackName}`;
+      script.async = true;
+
+      document.body.appendChild(script);
+      script.onload = () => document.body.removeChild(script);
+
+      setTimeout(() => {
+        this.fetchAllData();
+      }, 500);
+    },
+
+    registerItalian() {
+      this.loading = true;
+      this.error = null;
+      
+      const callbackName = `jsonpCallback${Date.now()}`;
+      window[callbackName] = (response) => {
+        console.log(response);
+
+        delete window[callbackName];
+      };
+
+      const script = document.createElement("script");
+      script.src = `${this.baseUrl}?action=addItalianData&courseNum=${this.courseNum}&callback=${callbackName}`;
       script.async = true;
 
       document.body.appendChild(script);
