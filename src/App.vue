@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center bg-gray-900 min-h-screen p-4 landscape:h-[97.5dvh]">
+  <div class="flex justify-center bg-gray-900 min-h-screen p-4 landscape:h-[97.5dvh]">
     <div class="w-full flex flex-col items-center">
       <!-- <h2 class="text-white text-center text-xl font-semibold mb-2">
         {{ currentMode === 'running' ? '🏃 Running Progress' : '🇮🇹 Italian Study Progress' }}
