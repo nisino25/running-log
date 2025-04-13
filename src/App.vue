@@ -140,7 +140,7 @@
       <div v-else-if="error" class="flex justify-center items-center h-[60vh]">
         <div class="text-red-500 text-lg">{{ error }}</div>
       </div>
-      <div v-else class="relative w-full h-[75vh] md:h-[50vh] landscape:h-[80dvh]">
+      <div v-else class="relative w-full h-[75dvh] md:h-[50vh] landscape:h-[80dvh]">
         <!-- Only render canvas when we have data -->
         <canvas v-if="hasData" ref="chartCanvas"></canvas>
       </div>
