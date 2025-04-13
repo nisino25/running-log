@@ -5,15 +5,15 @@ module.exports = defineConfig({
 
   pwa: {
     name: "My Vue PWA",
-    themeColor: "#1E1E1E", // Matches the background
-    msTileColor: "#1E1E1E", // For Windows
+    themeColor: "#111827", // Matches the background
+    msTileColor: "#111827", // For Windows
     appleMobileWebAppCapable: "yes",
     appleMobileWebAppStatusBarStyle: "black-translucent", // For iOS (forces dark overlay)
     manifestOptions: {
       short_name: "VuePWA",
       start_url: "/",
       display: "standalone",
-      background_color: "#1E1E1E", // Ensures seamless edge blending
+      background_color: "#111827", // Ensures seamless edge blending
       icons: [
         {
           src: "/img/icons/icon-192x192.png",

@@ -30,7 +30,7 @@
         <button
           @click="handleModeChange('swimming')"
           :class="currentMode === 'swimming' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-4 rounded-r-md"
+          class="text-white py-2 px-4 rounded-md"
         >
         🏊
         </button>
@@ -43,7 +43,7 @@
         </button>
       </div>
 
-      <div v-if="hasData && !error">
+      <div  v-if="hasData && !error">
         <div v-if="currentMode == 'yoga'">
           <button
             @click="registerYoga()"
@@ -51,7 +51,6 @@
           >
             登録
           </button>
-
         </div>
         <div v-if="currentMode == 'swimming'">
           <div class="flex items-center gap-2">
@@ -110,31 +109,26 @@
             </button>
           </div>
         </div>
-        <div v-if="currentMode == 'running'">
-          <div class="flex items-center gap-2">
-            <input
-              v-model="resultNum"
-              type="number"
-              id="resultNum"
-              class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-              min="1"
-              placeholder="距離"
-            />
-            <input
-              v-model="paceNum"
-              type="number"
-              id="paceNum"
-              class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-              min="1"
-              placeholder="ペース"
-            />
-  
-            <button
-              @click="registerRunning()"
-              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
-            >
-              登録
-            </button>
+        <div v-if="currentMode == 'running'" class="px-4 w-full max-w-[500px] mx-auto">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+              <input
+                v-model="resultNum"
+                type="number"
+                class="flex-1 min-w-[80px] px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="距離"
+              />
+              <input
+                v-model="paceNum"
+                type="number"
+                class="flex-1 min-w-[80px] px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="ペース"
+              />
+              <button
+                @click="registerRunning()"
+                class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300 whitespace-nowrap"
+              >
+                登録
+              </button>
           </div>
         </div>
 
@@ -146,7 +140,7 @@
       <div v-else-if="error" class="flex justify-center items-center h-[60vh]">
         <div class="text-red-500 text-lg">{{ error }}</div>
       </div>
-      <div v-else class="relative w-full h-[60vh] md:h-[50vh] landscape:h-[80dvh]">
+      <div v-else class="relative w-full h-[75vh] md:h-[50vh] landscape:h-[80dvh]">
         <!-- Only render canvas when we have data -->
         <canvas v-if="hasData" ref="chartCanvas"></canvas>
       </div>
@@ -268,7 +262,6 @@ export default {
             return;
           }
 
-          const weightGoal = 65;
           
           labels = filteredData.map(d => d.session);
           datasets = [
@@ -276,12 +269,6 @@ export default {
             { label: "Result", data: filteredData.map(d => d.result), borderColor: "#3B82F6", fill: false },
             { label: "Pace Goal", data: filteredData.map(d => d.paceGoal), borderColor: "rgba(255, 165, 0, 0.7)", fill: false },
             { label: "Pace", data: filteredData.map(d => d.pace), borderColor: "rgba(50, 205, 50, 0.8)", fill: false },
-            {
-              label: `Weight Goal: ${weightGoal}kg`,
-              data: filteredData.map(d => d.weight - weightGoal),
-              borderColor: "rgba(255, 99, 132, 0.8)",
-              fill: false,
-            },
           ];
         } else if(this.currentMode === 'italian') {
           const filteredData = this.fetchedData.filter(d => d && d.result);
@@ -533,7 +520,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+html,body{
+  background-color: #111827;
+}
 @media (orientation: landscape) {
   .landscape { height: 95dvh; max-width: 90vw; }
 }
