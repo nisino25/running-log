@@ -35,6 +35,13 @@
         🏊
         </button>
         <button
+          @click="handleModeChange('training')"
+          :class="currentMode === 'training' ? 'bg-blue-500' : 'bg-gray-600'"
+          class="text-white py-2 px-4 rounded-md"
+        >
+        💪
+        </button>
+        <button
           @click="handleModeChange('weight')"
           :class="currentMode === 'weight' ? 'bg-blue-500' : 'bg-gray-600'"
           class="text-white py-2 px-4 rounded-r-md"
@@ -47,6 +54,14 @@
         <div v-if="currentMode == 'yoga'">
           <button
             @click="registerYoga()"
+            class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition duration-300 ease-in-out"
+          >
+            登録
+          </button>
+        </div>
+        <div v-if="currentMode == 'training'">
+          <button
+            @click="registerTraining()"
             class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition duration-300 ease-in-out"
           >
             登録
@@ -164,7 +179,7 @@ export default {
       loading: true,
       error: null,
       hasData: false,
-      baseUrl: "https://script.google.com/macros/s/AKfycbwcCN3CCcAnQ1UfXhtvJEPessRRFDKhSio1C-6qNQuXft8b5ZJ6jxecGMe1XwTMv0Ta/exec",
+      baseUrl: "https://script.google.com/macros/s/AKfycbwcBNswCQjVIytRn9sJHLxK2aRGBDsr8Z3gFi07BpA_TsKTx6yWo8pupaxkTNvHdXlF/exec",
 
       swimmingLaps: null,
       weightNum: null,
@@ -286,6 +301,23 @@ export default {
           datasets = [
               { label: "Unit Goal", data: filteredData.map(d => d.unitGoal), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
               { label: "Result", data: filteredData.map(d => d.result), borderColor: "#EF4444", fill: false },
+          ];
+        } else if(this.currentMode === "training") {
+          const filteredData = this.fetchedData.filter(d => d && d.date);
+          
+          if (filteredData.length === 0) {
+              this.error = "No training data available";
+              return;
+          }
+      
+          labels = filteredData.map(d => {
+              const date = new Date(d.date);
+              return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
+          });
+      
+          datasets = [
+              { label: "Date", data: filteredData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
+              { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
           ];
         } else if(this.currentMode === "yoga") {
           const filteredData = this.fetchedData.filter(d => d && d.date);
@@ -411,6 +443,29 @@ export default {
 
       const script = document.createElement("script");
       script.src = `${this.baseUrl}?action=addCurrentJapaneseDate&callback=${callbackName}`;
+      script.async = true;
+
+      document.body.appendChild(script);
+      script.onload = () => document.body.removeChild(script);
+
+      setTimeout(() => {
+        this.fetchAllData();
+      }, 500);
+    },
+
+    registerTraining() {
+      this.loading = true;
+      this.error = null;
+      
+      const callbackName = `jsonpCallback${Date.now()}`;
+      window[callbackName] = (response) => {
+        console.log(response);
+
+        delete window[callbackName];
+      };
+
+      const script = document.createElement("script");
+      script.src = `${this.baseUrl}?action=addTrainingData&callback=${callbackName}`;
       script.async = true;
 
       document.body.appendChild(script);
