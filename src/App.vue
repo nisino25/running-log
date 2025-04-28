@@ -416,7 +416,7 @@ export default {
       } else if (this.currentMode === 'weight') {
         data = this.allData.weightData || [];
       } else if (this.currentMode === 'training') {
-        data = this.allData.trainData || [];
+        data = this.allData.trainingData || [];
       }
 
       this.fetchedData = data;
