@@ -415,6 +415,8 @@ export default {
         data = this.allData.swimmingData || [];
       } else if (this.currentMode === 'weight') {
         data = this.allData.weightData || [];
+      } else if (this.currentMode === 'training') {
+        data = this.allData.trainData || [];
       }
 
       this.fetchedData = data;
