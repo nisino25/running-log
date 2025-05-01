@@ -9,42 +9,42 @@
         <button
           @click="handleModeChange('running')"
           :class="currentMode === 'running' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-4 rounded-l-md"
+          class="text-white py-2 px-3 rounded-l-md"
         >
         🏃
         </button>
         <button
           @click="handleModeChange('italian')"
           :class="currentMode === 'italian' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-4 rounded-md"
+          class="text-white py-2 px-3 rounded-md"
         >
         🇮🇹
         </button>
         <button
           @click="handleModeChange('yoga')"
           :class="currentMode === 'yoga' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-4 rounded-md"
+          class="text-white py-2 px-3 rounded-md"
         >
         🧘‍♂️
         </button>
         <button
           @click="handleModeChange('swimming')"
           :class="currentMode === 'swimming' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-4 rounded-md"
+          class="text-white py-2 px-3 rounded-md"
         >
         🏊
         </button>
         <button
           @click="handleModeChange('training')"
           :class="currentMode === 'training' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-4 rounded-md"
+          class="text-white py-2 px-3 rounded-md"
         >
         💪
         </button>
         <button
           @click="handleModeChange('weight')"
           :class="currentMode === 'weight' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-4 rounded-r-md"
+          class="text-white py-2 px-3 rounded-r-md"
         >
         🫃🏻
         </button>
@@ -73,14 +73,14 @@
               v-model="swimmingLaps"
               type="number"
               id="laps"
-              class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+              class="flex-1 px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               min="1"
               placeholder="例: 20"
             />
   
             <button
               @click="registerSwimming()"
-              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
+              class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
             >
               登録
             </button>
@@ -92,14 +92,14 @@
               v-model="weightNum"
               type="number"
               id="weightNum"
-              class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+              class="flex-1 px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               min="1"
               placeholder="例: 65"
             />
   
             <button
               @click="registerWeight()"
-              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
+              class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
             >
               登録
             </button>
@@ -111,36 +111,36 @@
               v-model="courseNum"
               type="courseNum"
               id="courseNum"
-              class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+              class="flex-1 px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               min="1"
               placeholder="勉強中のコース"
             />
   
             <button
               @click="registerItalian()"
-              class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
+              class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300"
             >
               登録
             </button>
           </div>
         </div>
-        <div v-if="currentMode == 'running'" class="px-4 w-full max-w-[500px] mx-auto">
+        <div v-if="currentMode == 'running'" class="px-3 w-full max-w-[500px] mx-auto">
           <div class="flex flex-wrap items-center justify-between gap-2">
               <input
                 v-model="resultNum"
                 type="number"
-                class="flex-1 min-w-[80px] px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="flex-1 min-w-[80px] px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="距離"
               />
               <input
                 v-model="paceNum"
                 type="number"
-                class="flex-1 min-w-[80px] px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                class="flex-1 min-w-[80px] px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="ペース"
               />
               <button
                 @click="registerRunning()"
-                class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300 whitespace-nowrap"
+                class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition duration-300 whitespace-nowrap"
               >
                 登録
               </button>
