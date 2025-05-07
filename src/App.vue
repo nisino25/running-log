@@ -390,7 +390,7 @@ export default {
               y: { ticks: { color: "#E5E7EB" }, grid: { color: "#374151" } },
             },
             plugins: {
-              legend: { labels: { color: "#E5E7EB" } },
+              legend: { display: false   },
               tooltip: { titleColor: "#000", bodyColor: "#000", backgroundColor: "#E5E7EB" },
             },
           },
