@@ -276,14 +276,18 @@ export default {
             this.error = "No running data available";
             return;
           }
-
           
-          labels = filteredData.map(d => d.session);
+          // labels = filteredData.map(d => d.date);
+          labels = filteredData.map(d => {
+              const [year, month, day] = d.date.split('/');
+              return `${month}${day}`;
+          });
           datasets = [
             { label: "Goal", data: filteredData.map(d => d.goal), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
             { label: "Result", data: filteredData.map(d => d.result), borderColor: "#3B82F6", fill: false },
             { label: "Pace Goal", data: filteredData.map(d => d.paceGoal), borderColor: "rgba(255, 165, 0, 0.7)", fill: false },
             { label: "Pace", data: filteredData.map(d => d.pace), borderColor: "rgba(50, 205, 50, 0.8)", fill: false },
+            { label: "Days since", data: filteredData.map(d => d.daysSince), borderColor: "rgba(60, 220, 60, 0.8)", fill: false }
           ];
         } else if(this.currentMode === 'italian') {
           const filteredData = this.fetchedData.filter(d => d && d.result);
