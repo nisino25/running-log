@@ -277,16 +277,13 @@ export default {
             return;
           }
           
-          // labels = filteredData.map(d => d.date);
-          labels = filteredData.map(d => {
-            try {
-              const [y, m, day] = d.date.split(/[/-]/); // handles both "2025/05/06" and "2025-05-06"
-              return `${m.padStart(2, '0')}/${day.padStart(2, '0')}`; // "0506"
-            } catch (e) {
-              console.warn("Invalid date format:", d.date);
-              return d.date; // fallback to original if it fails
-            }
-          });
+          labels = filteredData.map(d => d.date);
+          // labels = filteredData.map(d => {
+          //   const dateObj = new Date(d.date.replace(/-/g, '/')); // handle possible "2025-05-06" or "2025/05/06"
+          //   const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          //   const day = String(dateObj.getDate()).padStart(2, '0');
+          //   return `${month}${day}`; // like "0506"
+          // });
           datasets = [
             { label: "Goal", data: filteredData.map(d => d.goal), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
             { label: "Result", data: filteredData.map(d => d.result), borderColor: "#3B82F6", fill: false },
