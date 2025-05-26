@@ -277,7 +277,14 @@ export default {
             return;
           }
           
-          labels = filteredData.map(d => d.date);
+          // labels = filteredData.map(d => d.date);
+          labels = filteredData.map(d => {
+            const utcDate = new Date(d.date);
+            const jstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000); // JST = UTC+9
+            const month = String(jstDate.getMonth() + 1).padStart(2, '0');
+            const day = String(jstDate.getDate()).padStart(2, '0');
+            return `${month}/${day}`; // Example: "05/06"
+          });
           // labels = filteredData.map(d => {
           //   const dateObj = new Date(d.date.replace(/-/g, '/')); // handle possible "2025-05-06" or "2025/05/06"
           //   const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -396,7 +403,7 @@ export default {
               y: { ticks: { color: "#E5E7EB" }, grid: { color: "#374151" } },
             },
             plugins: {
-              legend: { display: false   },
+              legend: { display: false },
               tooltip: { titleColor: "#000", bodyColor: "#000", backgroundColor: "#E5E7EB" },
             },
           },
