@@ -373,40 +373,34 @@ export default {
               { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
           ];
         } else if(this.currentMode === "weight") {
-          	const rawData = this.fetchedData.filter(d => d && d.date && d.weight != null);
+          const rawData = this.fetchedData.filter(d => d && d.date && d.weight != null);
 
-			if (rawData.length === 0) {
-				this.error = "No weight data available";
-				return;
-			}
+          if (rawData.length === 0) {
+            this.error = "No weight data available";
+            return;
+          }
 
-			const filledData = this.generateFilledWeightData(rawData);
+          const filledData = this.generateFilledWeightData(rawData);
 
-			labels = filledData.map(d => {
-				const date = new Date(d.date);
-				return `${date.getMonth() + 1}-${date.getDate()}`;
-			});
+          labels = filledData.map(d => {
+            const date = new Date(d.date);
+            return `${date.getMonth() + 1}-${date.getDate()}`;
+          });
 
-			const actualData = filledData.map(d => d.isFilled ? null : d.weight);
-			const interpolatedData = filledData.map(d => d.isFilled ? d.weight : null);
+          datasets = [
+  {
+    label: "Weight",
+    data: filledData.map(d => d.weight),
+    borderColor: "#EF4444",
+    spanGaps: true,
+    fill: false,
+    segment: {
+      borderDash: ctx => ctx.p0.raw && ctx.p0.raw.isFilled ? [5, 5] : undefined,
+    },
+    pointRadius: ctx => ctx.raw && ctx.raw.isFilled ? 0 : 3, // hide filled points
+  }
+];
 
-			datasets = [
-				{
-					label: "Actual Weight",
-					data: actualData,
-					borderColor: "#EF4444",
-					spanGaps: true,
-					fill: false
-				},
-				{
-					label: "Estimated Weight",
-					data: interpolatedData,
-					borderColor: "#FBBF24",
-					borderDash: [5, 5], // dashed line
-					spanGaps: true,
-					fill: false
-				}
-			];
         }
 
         
@@ -432,43 +426,55 @@ export default {
       }
     },
 
-	generateFilledWeightData(data) {
-		if (!data || data.length === 0) return [];
+generateFilledWeightData(data) {
+	if (!data || data.length === 0) return [];
 
-		const result = [];
-		const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
-		
-		const formatDate = date => date.toISOString().split('T')[0];
-		
-		let currentDate = new Date(sorted[0].date);
-		const endDate = new Date(sorted[sorted.length - 1].date);
-		let i = 0;
+	const result = [];
+	const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
 
-		while (currentDate <= endDate) {
-			const dateStr = formatDate(currentDate);
+	const formatDate = date => date.toISOString().split('T')[0];
 
-			if (sorted[i] && formatDate(new Date(sorted[i].date)) === dateStr) {
-				result.push({ ...sorted[i], isFilled: false }); // actual record
-				i++;
-			} else {
-				// find neighbors
-				const prev = result[result.length - 1];
-				const next = sorted[i];
+	let i = 0;
+	let currentDate = new Date(sorted[0].date);
+	const endDate = new Date(sorted[sorted.length - 1].date);
 
-				if (prev && next) {
-					const totalGap = (new Date(next.date) - new Date(prev.date)) / (1000 * 60 * 60 * 24);
-					const currentGap = (currentDate - new Date(prev.date)) / (1000 * 60 * 60 * 24);
+	while (currentDate <= endDate) {
+		const dateStr = formatDate(currentDate);
+
+		const match = sorted[i] && formatDate(new Date(sorted[i].date)) === dateStr;
+
+		if (match) {
+			result.push({ ...sorted[i], isFilled: false });
+			i++;
+		} else {
+			// find previous actual point
+			const prev = result[result.length - 1];
+			const next = sorted[i];
+
+			if (prev && next) {
+				const totalGap = (new Date(next.date) - new Date(prev.date)) / (1000 * 60 * 60 * 24);
+				const currentGap = (currentDate - new Date(prev.date)) / (1000 * 60 * 60 * 24);
+
+				if (totalGap > 0) {
 					const interpolatedWeight = prev.weight + ((next.weight - prev.weight) * currentGap / totalGap);
-
 					result.push({ date: dateStr, weight: interpolatedWeight, isFilled: true });
 				}
 			}
-
-			currentDate.setDate(currentDate.getDate() + 1);
 		}
 
-		return result;
-	},
+		// Move to the next day
+		currentDate.setDate(currentDate.getDate() + 1);
+	}
+
+	// ✅ Check if final data point is missing and add it if needed
+	const lastDataPointDate = formatDate(new Date(sorted[sorted.length - 1].date));
+	const alreadyIncluded = result.some(r => formatDate(new Date(r.date)) === lastDataPointDate && !r.isFilled);
+	if (!alreadyIncluded) {
+		result.push({ ...sorted[sorted.length - 1], isFilled: false });
+	}
+
+	return result;
+},
 
 
     updateChartData() {
