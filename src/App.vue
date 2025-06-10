@@ -373,22 +373,40 @@ export default {
               { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
           ];
         } else if(this.currentMode === "weight") {
-          const filteredData = this.fetchedData.filter(d => d && d.date);
-          
-          if (filteredData.length === 0) {
-              this.error = "No swimminf data available";
-              return;
-          }
-      
-          labels = filteredData.map(d => {
-              const date = new Date(d.date);
-              return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
-          });
-      
-          datasets = [
-              { label: "Date", data: filteredData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
-              { label: "Weight", data: filteredData.map(d => d.weight), borderColor: "#EF4444", fill: false },
-          ];
+          	const rawData = this.fetchedData.filter(d => d && d.date && d.weight != null);
+
+			if (rawData.length === 0) {
+				this.error = "No weight data available";
+				return;
+			}
+
+			const filledData = this.generateFilledWeightData(rawData);
+
+			labels = filledData.map(d => {
+				const date = new Date(d.date);
+				return `${date.getMonth() + 1}-${date.getDate()}`;
+			});
+
+			const actualData = filledData.map(d => d.isFilled ? null : d.weight);
+			const interpolatedData = filledData.map(d => d.isFilled ? d.weight : null);
+
+			datasets = [
+				{
+					label: "Actual Weight",
+					data: actualData,
+					borderColor: "#EF4444",
+					spanGaps: true,
+					fill: false
+				},
+				{
+					label: "Estimated Weight",
+					data: interpolatedData,
+					borderColor: "#FBBF24",
+					borderDash: [5, 5], // dashed line
+					spanGaps: true,
+					fill: false
+				}
+			];
         }
 
         
@@ -413,6 +431,45 @@ export default {
         this.error = "Error creating chart";
       }
     },
+
+	generateFilledWeightData(data) {
+		if (!data || data.length === 0) return [];
+
+		const result = [];
+		const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+		
+		const formatDate = date => date.toISOString().split('T')[0];
+		
+		let currentDate = new Date(sorted[0].date);
+		const endDate = new Date(sorted[sorted.length - 1].date);
+		let i = 0;
+
+		while (currentDate <= endDate) {
+			const dateStr = formatDate(currentDate);
+
+			if (sorted[i] && formatDate(new Date(sorted[i].date)) === dateStr) {
+				result.push({ ...sorted[i], isFilled: false }); // actual record
+				i++;
+			} else {
+				// find neighbors
+				const prev = result[result.length - 1];
+				const next = sorted[i];
+
+				if (prev && next) {
+					const totalGap = (new Date(next.date) - new Date(prev.date)) / (1000 * 60 * 60 * 24);
+					const currentGap = (currentDate - new Date(prev.date)) / (1000 * 60 * 60 * 24);
+					const interpolatedWeight = prev.weight + ((next.weight - prev.weight) * currentGap / totalGap);
+
+					result.push({ date: dateStr, weight: interpolatedWeight, isFilled: true });
+				}
+			}
+
+			currentDate.setDate(currentDate.getDate() + 1);
+		}
+
+		return result;
+	},
+
 
     updateChartData() {
       this.error = null;
