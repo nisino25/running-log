@@ -48,12 +48,27 @@
         >
         🫃🏻
         </button>
+        <button
+          @click="handleModeChange('alchool')"
+          :class="currentMode === 'alchool' ? 'bg-blue-500' : 'bg-gray-600'"
+          class="text-white py-2 px-3 rounded-r-md"
+        >
+        🍺
+        </button>
       </div>
 
       <div  v-if="hasData && !error">
         <div v-if="currentMode == 'yoga'">
           <button
             @click="registerYoga()"
+            class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition duration-300 ease-in-out"
+          >
+            登録
+          </button>
+        </div>
+        <div v-if="currentMode == 'alchool'">
+          <button
+            @click="registerAlchool()"
             class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition duration-300 ease-in-out"
           >
             登録
@@ -179,7 +194,7 @@ export default {
       loading: true,
       error: null,
       hasData: false,
-      baseUrl: "https://script.google.com/macros/s/AKfycbwcBNswCQjVIytRn9sJHLxK2aRGBDsr8Z3gFi07BpA_TsKTx6yWo8pupaxkTNvHdXlF/exec",
+      baseUrl: "https://script.google.com/macros/s/AKfycbzK2vk5vFEjkeOKLZDdMRMyXntQP9fdMhv4ddRoSBqu4ZLvLZrO5MVvN8hlxIGjxZs/exec",
 
       swimmingLaps: null,
       weightNum: null,
@@ -388,20 +403,53 @@ export default {
           });
 
           datasets = [
-  {
-    label: "Weight",
-    data: filledData.map(d => d.weight),
-    borderColor: "#EF4444",
-    spanGaps: true,
-    fill: false,
-    segment: {
-      borderDash: ctx => ctx.p0.raw && ctx.p0.raw.isFilled ? [5, 5] : undefined,
-    },
-    pointRadius: ctx => ctx.raw && ctx.raw.isFilled ? 0 : 3, // hide filled points
-  }
-];
+            {
+              label: "Weight",
+              data: filledData.map(d => d.weight),
+              borderColor: "#EF4444",
+              spanGaps: true,
+              fill: false,
+              segment: {
+                borderDash: ctx => ctx.p0.raw && ctx.p0.raw.isFilled ? [5, 5] : undefined,
+              },
+              pointRadius: ctx => ctx.raw && ctx.raw.isFilled ? 0 : 3, // hide filled points
+            }
+          ];
 
+        } else if (this.currentMode === "alchool") {
+    const filteredData = this.fetchedData
+        .filter(d => d && d.date)
+        .sort((a, b) => new Date(a.date) - new Date(b.date)); // Ensure it's sorted
+
+    if (filteredData.length === 0) {
+        this.error = "No alchool data available";
+        return;
+    }
+
+    const enhancedData = filteredData.map((d, i, arr) => {
+        if (i === 0) {
+            return { ...d, daysSince: "x" };
+        } else {
+            const currentDate = new Date(d.date);
+            const prevDate = new Date(arr[i - 1].date);
+            const diffTime = currentDate - prevDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return { ...d, daysSince: diffDays };
         }
+    });
+
+    console.log(enhancedData);
+
+    labels = enhancedData.map(d => {
+        const date = new Date(d.date);
+        return `${date.getMonth() + 1}-${date.getDate()}`;
+    });
+
+    datasets = [
+        { label: "Date", data: enhancedData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
+        { label: "Days Since", data: enhancedData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
+    ];
+}
 
         
         this.chartInstance = new Chart(ctx, {
@@ -426,55 +474,55 @@ export default {
       }
     },
 
-generateFilledWeightData(data) {
-	if (!data || data.length === 0) return [];
+    generateFilledWeightData(data) {
+      if (!data || data.length === 0) return [];
 
-	const result = [];
-	const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+      const result = [];
+      const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
 
-	const formatDate = date => date.toISOString().split('T')[0];
+      const formatDate = date => date.toISOString().split('T')[0];
 
-	let i = 0;
-	let currentDate = new Date(sorted[0].date);
-	const endDate = new Date(sorted[sorted.length - 1].date);
+      let i = 0;
+      let currentDate = new Date(sorted[0].date);
+      const endDate = new Date(sorted[sorted.length - 1].date);
 
-	while (currentDate <= endDate) {
-		const dateStr = formatDate(currentDate);
+      while (currentDate <= endDate) {
+        const dateStr = formatDate(currentDate);
 
-		const match = sorted[i] && formatDate(new Date(sorted[i].date)) === dateStr;
+        const match = sorted[i] && formatDate(new Date(sorted[i].date)) === dateStr;
 
-		if (match) {
-			result.push({ ...sorted[i], isFilled: false });
-			i++;
-		} else {
-			// find previous actual point
-			const prev = result[result.length - 1];
-			const next = sorted[i];
+        if (match) {
+          result.push({ ...sorted[i], isFilled: false });
+          i++;
+        } else {
+          // find previous actual point
+          const prev = result[result.length - 1];
+          const next = sorted[i];
 
-			if (prev && next) {
-				const totalGap = (new Date(next.date) - new Date(prev.date)) / (1000 * 60 * 60 * 24);
-				const currentGap = (currentDate - new Date(prev.date)) / (1000 * 60 * 60 * 24);
+          if (prev && next) {
+            const totalGap = (new Date(next.date) - new Date(prev.date)) / (1000 * 60 * 60 * 24);
+            const currentGap = (currentDate - new Date(prev.date)) / (1000 * 60 * 60 * 24);
 
-				if (totalGap > 0) {
-					const interpolatedWeight = prev.weight + ((next.weight - prev.weight) * currentGap / totalGap);
-					result.push({ date: dateStr, weight: interpolatedWeight, isFilled: true });
-				}
-			}
-		}
+            if (totalGap > 0) {
+              const interpolatedWeight = prev.weight + ((next.weight - prev.weight) * currentGap / totalGap);
+              result.push({ date: dateStr, weight: interpolatedWeight, isFilled: true });
+            }
+          }
+        }
 
-		// Move to the next day
-		currentDate.setDate(currentDate.getDate() + 1);
-	}
+        // Move to the next day
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
 
-	// ✅ Check if final data point is missing and add it if needed
-	const lastDataPointDate = formatDate(new Date(sorted[sorted.length - 1].date));
-	const alreadyIncluded = result.some(r => formatDate(new Date(r.date)) === lastDataPointDate && !r.isFilled);
-	if (!alreadyIncluded) {
-		result.push({ ...sorted[sorted.length - 1], isFilled: false });
-	}
+      // ✅ Check if final data point is missing and add it if needed
+      const lastDataPointDate = formatDate(new Date(sorted[sorted.length - 1].date));
+      const alreadyIncluded = result.some(r => formatDate(new Date(r.date)) === lastDataPointDate && !r.isFilled);
+      if (!alreadyIncluded) {
+        result.push({ ...sorted[sorted.length - 1], isFilled: false });
+      }
 
-	return result;
-},
+      return result;
+    },
 
 
     updateChartData() {
@@ -493,6 +541,8 @@ generateFilledWeightData(data) {
         data = this.allData.weightData || [];
       } else if (this.currentMode === 'training') {
         data = this.allData.trainingData || [];
+      } else if (this.currentMode === 'alchool') {
+        data = this.allData.drinkingData || [];
       }
 
       this.fetchedData = data;
@@ -521,6 +571,29 @@ generateFilledWeightData(data) {
 
       const script = document.createElement("script");
       script.src = `${this.baseUrl}?action=addCurrentJapaneseDate&callback=${callbackName}`;
+      script.async = true;
+
+      document.body.appendChild(script);
+      script.onload = () => document.body.removeChild(script);
+
+      setTimeout(() => {
+        this.fetchAllData();
+      }, 500);
+    },
+
+    registerAlchool() {
+      this.loading = true;
+      this.error = null;
+      
+      const callbackName = `jsonpCallback${Date.now()}`;
+      window[callbackName] = (response) => {
+        console.log(response);
+
+        delete window[callbackName];
+      };
+
+      const script = document.createElement("script");
+      script.src = `${this.baseUrl}?action=addDrinkingData&callback=${callbackName}`;
       script.async = true;
 
       document.body.appendChild(script);
