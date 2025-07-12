@@ -1,59 +1,18 @@
 <template>
   <div class="flex justify-center bg-gray-900 min-h-screen p-4 landscape:h-[97.5dvh]">
     <div class="w-full flex flex-col items-center">
-      <!-- <h2 class="text-white text-center text-xl font-semibold mb-2">
-        {{ currentMode === 'running' ? '🏃 Running Progress' : '🇮🇹 Italian Study Progress' }}
-      </h2> -->
 
-      <div class="mb-4 flex gap-2 text-xl">
+      <div class="mb-4 text-xl flex gap-2 overflow-x-auto whitespace-nowrap no-scrollbar">
         <button
-          @click="handleModeChange('running')"
-          :class="currentMode === 'running' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-3 rounded-l-md"
+          v-for="mode in modes"
+          :key="mode.name"
+          @click="handleModeChange(mode.name)"
+          :class="[
+            currentMode === mode.name ? 'bg-blue-500' : 'bg-gray-600',
+            'text-white py-1 px-2 rounded-md text-s'
+          ]"
         >
-        🏃
-        </button>
-        <button
-          @click="handleModeChange('italian')"
-          :class="currentMode === 'italian' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-3 rounded-md"
-        >
-        🇮🇹
-        </button>
-        <button
-          @click="handleModeChange('yoga')"
-          :class="currentMode === 'yoga' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-3 rounded-md"
-        >
-        🧘‍♂️
-        </button>
-        <button
-          @click="handleModeChange('swimming')"
-          :class="currentMode === 'swimming' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-3 rounded-md"
-        >
-        🏊
-        </button>
-        <button
-          @click="handleModeChange('training')"
-          :class="currentMode === 'training' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-3 rounded-md"
-        >
-        💪
-        </button>
-        <button
-          @click="handleModeChange('weight')"
-          :class="currentMode === 'weight' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-3 rounded-r-md"
-        >
-        🫃🏻
-        </button>
-        <button
-          @click="handleModeChange('alchool')"
-          :class="currentMode === 'alchool' ? 'bg-blue-500' : 'bg-gray-600'"
-          class="text-white py-2 px-3 rounded-r-md"
-        >
-        🍺
+          {{ mode.icon }}
         </button>
       </div>
 
@@ -203,6 +162,16 @@ export default {
       paceNum: null,
 
       courseNum: null,
+
+      modes: [
+        { name: 'running', icon: '🏃' },
+        { name: 'italian', icon: '🇮🇹' },
+        { name: 'yoga', icon: '🧘‍♂️' },
+        { name: 'swimming', icon: '🏊' },
+        { name: 'training', icon: '💪' },
+        { name: 'weight', icon: '🫃🏻' },
+        { name: 'alchool', icon: '🍺' },
+      ],
     };
   },
   mounted() {
