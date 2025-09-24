@@ -317,22 +317,48 @@ export default {
               { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
           ];
         } else if(this.currentMode === "yoga") {
-          const filteredData = this.fetchedData.filter(d => d && d.date);
-          
-          if (filteredData.length === 0) {
-              this.error = "No yoga data available";
-              return;
-          }
-      
-          labels = filteredData.map(d => {
-              const date = new Date(d.date);
-              return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
-          });
-      
-          datasets = [
-              { label: "Date", data: filteredData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
-              { label: "Days Since", data: filteredData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
-          ];
+          const filteredData = this.fetchedData
+    .filter(d => d && d.date)
+    .sort((a, b) => new Date(a.date) - new Date(b.date)); // sort by date
+
+if (filteredData.length === 0) {
+    this.error = "No yoga data available";
+    return;
+}
+
+labels = filteredData.map(d => {
+    const date = new Date(d.date);
+    return `${date.getMonth() + 1}-${date.getDate()}`; // Format as MM-DD
+});
+
+// calculate consecutive streaks
+let streak = 0;
+let lastDate = null;
+const streakData = filteredData.map(d => {
+    const currentDate = new Date(d.date);
+    if (!lastDate) {
+        streak = 1;
+    } else {
+        const diffDays = Math.round((currentDate - lastDate) / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+            streak++;
+        } else {
+            streak = 1;
+        }
+    }
+    lastDate = currentDate;
+    return streak;
+});
+
+datasets = [
+    {
+        label: "Consecutive Streak",
+        data: streakData,
+        borderColor: "#3B82F6",
+        fill: false
+    }
+];
+
         } else if(this.currentMode === "swimming") {
           const filteredData = this.fetchedData.filter(d => d && d.date);
           
@@ -386,39 +412,39 @@ export default {
           ];
 
         } else if (this.currentMode === "alchool") {
-    const filteredData = this.fetchedData
-        .filter(d => d && d.date)
-        .sort((a, b) => new Date(a.date) - new Date(b.date)); // Ensure it's sorted
+            const filteredData = this.fetchedData
+                .filter(d => d && d.date)
+                .sort((a, b) => new Date(a.date) - new Date(b.date)); // Ensure it's sorted
 
-    if (filteredData.length === 0) {
-        this.error = "No alchool data available";
-        return;
-    }
+            if (filteredData.length === 0) {
+                this.error = "No alchool data available";
+                return;
+            }
 
-    const enhancedData = filteredData.map((d, i, arr) => {
-        if (i === 0) {
-            return { ...d, daysSince: "x" };
-        } else {
-            const currentDate = new Date(d.date);
-            const prevDate = new Date(arr[i - 1].date);
-            const diffTime = currentDate - prevDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            return { ...d, daysSince: diffDays };
+            const enhancedData = filteredData.map((d, i, arr) => {
+                if (i === 0) {
+                    return { ...d, daysSince: "x" };
+                } else {
+                    const currentDate = new Date(d.date);
+                    const prevDate = new Date(arr[i - 1].date);
+                    const diffTime = currentDate - prevDate;
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    return { ...d, daysSince: diffDays };
+                }
+            });
+
+            console.log(enhancedData);
+
+            labels = enhancedData.map(d => {
+                const date = new Date(d.date);
+                return `${date.getMonth() + 1}-${date.getDate()}`;
+            });
+
+            datasets = [
+                { label: "Date", data: enhancedData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
+                { label: "Days Since", data: enhancedData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
+            ];
         }
-    });
-
-    console.log(enhancedData);
-
-    labels = enhancedData.map(d => {
-        const date = new Date(d.date);
-        return `${date.getMonth() + 1}-${date.getDate()}`;
-    });
-
-    datasets = [
-        { label: "Date", data: enhancedData.map(d => d.date), borderColor: "rgba(128, 128, 128, 0.5)", fill: false },
-        { label: "Days Since", data: enhancedData.map(d => d.daysSince), borderColor: "#EF4444", fill: false },
-    ];
-}
 
         
         this.chartInstance = new Chart(ctx, {
